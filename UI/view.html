@@ -1,0 +1,50 @@
+{% load static %}
+<html>
+	<head>
+		<script>
+			     window.drf = {
+					csrfHeaderName: "X-CSRFTOKEN",
+					csrfToken: "{{csrf_token}}"
+				};
+		</script>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+    	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    	<link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;500&display=swap" rel="stylesheet">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+		<link rel="stylesheet" href="{% static 'css/view.css' %}">
+		<script src="{% static 'js/csrf.js' %}"></script>
+		<script src="{% static 'js/view.js' %}"></script>
+		
+	</head>
+	<body>				
+		{% csrf_token %}
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			<img src="/static/images/copy.png" alt="" width="30" height="24" class="d-inline-block align-text-top">
+			<a class="navbar-brand" href="/" style="font-family:'Inconsolata', monospace;">PasteBox</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item active">
+						<a class="nav-link" href="/" style="font-family:'Inconsolata', monospace;">Home <span class="sr-only">(current)</span></a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/create_paste.html" style="font-family:'Inconsolata', monospace;">CreatePaste</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="" style="font-family:'Inconsolata', monospace;">{{user.username}}</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+
+		<input class="title" type="text" id="title" placeholder="Enter Title" value="{{title}}"><br>
+		{% if editable %}<button style="margin-left: 15px;" onclick="update_post('{{id}}','{{csrf_token}}')" class="options">Save</button><button onclick="__edit()" class="options">Edit</button><button onclick="copycontent()" class="options">Copy</button><button onclick="delete_post('{{id}}','{{csrf_token}}')" class="options">Delete</button>{% else %}<button onclick="copycontent()" style="margin-left:15px;" class="options">Copy</button> {% endif %}<br>
+		<textarea readonly="true" name="ide" class="post_content" id="ide" wrap="off">{{content}}</textarea>
+	</body>
+</html>

@@ -1,0 +1,120 @@
+{% load static %}
+<html>
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+		<link rel="stylesheet" href="{% static 'css/index.css' %}">
+		<script src="{% static 'js/csrf.js' %}"></script>
+		<script src="{% static 'js/index.js' %}"></script>
+
+		{% if user.is_authenticated %}
+			<script> init()</script>
+		{% endif %}
+	</head>
+	<body>				
+		{% csrf_token %}
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			<img src="/static/images/copy.png" alt="" width="30" height="24" class="d-inline-block align-text-top">
+			<a class="navbar-brand" href="/" style="font-family:'Inconsolata', monospace;">PasteBox</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+					{% if user.is_authenticated %}
+						<li class="nav-item active">
+							<a class="nav-link" href="/" style="font-family:'Inconsolata', monospace;">Home <span class="sr-only">(current)</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="/CreatePost" style="font-family:'Inconsolata', monospace;">CreatePaste</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="/" style="font-family:'Inconsolata', monospace;">{{ user.username }}</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="/logout" style="font-family:'Inconsolata', monospace;">logout</a>
+						</li>
+					{% else %}
+						<li class="nav-item dropdown">
+							<button style="border:0px solid red;font-family:'Inconsolata', monospace;background-color:transparent;" id="menu_head" class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Accounts
+							</button>
+							<div id="menu_items" class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<p class="dropdown-item" style="background-color:transparent;font-family:'Inconsolata', monospace;"><button class="get_in" style="font-family:'Inconsolata', monospace;font-family:'Inconsolata', monospace;" onclick="open_login()">Sign In</button><br>New User? <button onclick="open_create()" class="create_btn">Create Account</button></p>
+							</div>
+						</li>
+					{% endif %}
+				</ul>
+				<form class="form-inline my-2 my-lg-0">
+					<input class="form-control mr-sm-2" onkeypress="disable(this)" id="search_query" type="search" placeholder="Search" style="font-family:'Inconsolata', monospace;" aria-label="Search">
+					<input type="button" onclick="perform_search()" class="btn btn-outline-success my-2 my-sm-0" style="font-family:'Inconsolata', monospace;" type="submit" value="Search">
+				</form>
+			</div>
+		</nav>
+		{% if not user.is_authenticated %}
+			<h1 class="heading">
+				About us
+			</h1>
+			<h3 class="heading" style="font-size: 20px;">A site where you can store text content for free and share with other via single link.<br>Access your post from anywhere and at any time.It's free and easy to use.<br></h3>
+		{% else %}
+			<h3 class="heading">Your Pastes</h3>
+			<table class="table">
+				<thead>
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">Title</th>
+					<th scope="col">Date</th>
+					<th scope="col">Time</th>
+				</tr>
+				</thead>
+				<tbody id="rowss">
+				
+				</tbody>
+			</table>
+		{% endif %}
+		<!-- DIALOG BOX START -->
+		<center>
+			<div class="create_acc_dialog" id="cacc">
+				<div class="card" style="margin-top:15px;width: 38rem;box-shadow:2px 2px 1px gray;">
+					<form>
+						<div class="card-body">
+							<h3 style="float:left;" class="card-title" style="text-shadow:2px 2px 1px gray;">Create account</h3> <input type="button" class="close_btn" onclick="close_create()" value='X'>
+							<div class="form-group">
+								<input type="text" onkeypress="disable(this)" class="form-control" id="uname" name="uname" placeholder="Username" autocomplete="off" required><br>
+								<input type="text" onkeypress="disable(this)" class="form-control" id="create_email" name="create_email" placeholder="Email" autocomplete="off" required><br>
+								<input id="create_pwd" onkeypress="disable(this)" type="password" name="pwd" class="form-control" placeholder="create password" autocomplete="off" required>
+							</div>
+						</div>
+						<input type="button" onclick="create_user()" class="submit_button" value="Create account"><br>
+						<input type="button" class="create_btn" onclick="open_login()" value="I have account login">
+						<div class="loader" id="cloader"></div>
+					</form>
+					<br>
+				</div>
+			</div>
+			</center>
+			<center>
+				<div class="login_acc_dialog" id="lacc">
+					<div class="card" style="margin-top:15px;width: 38rem;box-shadow:2px 2px 1px gray;">
+						<form>
+							<div class="card-body">
+								<h3 style="float:left;" class="card-title" style="text-shadow:2px 2px 1px gray;">Login account</h3> <input type="button" class="close_btn" onclick="close_login()" value='X'>
+								<div class="form-group">
+									<input type="text" onkeypress="disable(this)" class="form-control" id="login_email" placeholder="Email" autocomplete="off" required><br>
+									<input id="login_pwd" onkeypress="disable(this)" type="password" name="pwd" class="form-control" placeholder="create password" autocomplete="off" required>
+								</div>
+							</div>
+							<input type="button" onclick="login_user()" class="submit_button" value="Login"><br>
+							<input type="button" class="create_btn" onclick="open_create()" value="I don't have account.">
+							<div class="loader" id="lloader"></div>
+						</form>
+						<br>
+					</div>
+				</div>
+				</center>
+		<!-- DIALOG BOX END -->
+	</body>
+</html>

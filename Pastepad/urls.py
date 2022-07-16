@@ -16,6 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from main.views import PasteRUD,PasteAPIView,home,Flogout,Flogin,Fcreate,create_post,POST,get_token
+from django.conf.urls.static import static
+from django.conf import settings
+
 
 urlpatterns = [
     path('token',get_token),
@@ -28,4 +31,4 @@ urlpatterns = [
     path('api',PasteAPIView.as_view()),
     path('createuser',Fcreate),
     path('read/<str:key>',POST),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

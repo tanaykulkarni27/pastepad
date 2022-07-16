@@ -1,3 +1,4 @@
+
 function init(){
     var url = '/api';
     $.ajax({
@@ -22,13 +23,12 @@ function init(){
 function open_create(){
     close_login();
     document.getElementById('cacc').style.display = 'block';
+    alert("PLEASE REMEMBER THE PASSWORD IT CANNOT BE UPDATED");
 }
 function close_create(){
     document.getElementById('cacc').style.display = 'none';
 }
-function create_user(){
-    // create_user_dialog
-}
+
 function open_login(){
     close_create();
     document.getElementById('lacc').style.display = 'block';
@@ -36,8 +36,76 @@ function open_login(){
 function close_login(){
     document.getElementById('lacc').style.display = 'none';
 }
-function login_user(){
+function create_user(){
     
+    var mail = document.getElementById('create_email').value;
+    var username = document.getElementById('uname').value;
+    var pwd = document.getElementById('create_pwd').value;
+    if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)){
+        if(pwd.trim().length == 0){
+            alert("INVALID PASSWORD");
+            return;
+        }
+        if(username.trim().length == 0){
+            alert("INVALID PASSWORD");
+            return;
+        }
+        $.ajax({
+            url:'/createuser',
+            type:'POST',
+            data:{
+                csrfmiddlewaretoken : $('input[name=csrfmiddlewaretoken]').val(),
+                email : mail,
+                password : pwd,
+                username : username
+            },
+            beforeSend:()=>{
+                document.getElementById('cloader').style.display = 'block';
+            },
+            success:(res)=>{
+                alert(res);
+                document.getElementById('cloader').style.display = 'none';
+                if(res == "SUCCESS"){
+                    location.reload();
+                }
+            }
+        });
+    }else{
+        alert("INVALID EMAIL");
+        return;
+    }
+}
+function login_user(){
+    var mail = document.getElementById('login_email').value;
+    var pwd = document.getElementById('login_pwd').value;
+    if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)){
+        if(pwd.trim().length == 0){
+            alert("INVALID PASSWORD");
+            return;
+        }
+        $.ajax({
+            url:'/login',
+            type:'POST',
+            data:{
+                csrfmiddlewaretoken : $('input[name=csrfmiddlewaretoken]').val(),
+                email : mail,
+                password : pwd
+            },
+            beforeSend:()=>{
+                document.getElementById('lloader').style.display = 'block';
+            },
+            success:(res)=>{
+                alert(res);
+                document.getElementById('lloader').style.display = 'none';
+                if(res == "SUCCESS"){
+                    location.reload();
+                }
+            }
+        });
+    }else{
+        alert("INVALID EMAIL");
+        return;
+    }
 }
 function disable(f){
     f.addEventListener("keypress", function(event) {
@@ -69,4 +137,8 @@ function perform_search() {
             }
         }
     });
+}
+
+function delete_post(){
+    
 }

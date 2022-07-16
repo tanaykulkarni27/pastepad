@@ -26,7 +26,7 @@ urlpatterns = [
     path('logout',Flogout),
     path('',home),
     path('CreatePost',create_post),
-    path('admin/', admin.site.urls),
+    #path('admin/', admin.site.urls),
     path('api/<str:id>',PasteRUD.as_view()),
     path('api',PasteAPIView.as_view()),
     path('createuser',Fcreate),
